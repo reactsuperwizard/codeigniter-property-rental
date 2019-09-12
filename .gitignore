@@ -1,0 +1,11 @@
+session/*
+system/*
+uploads/*
+.htaccess
+error_log
+quote_template/*
+js/*
+images/*
+fonts/*
+css/*
+__MACOSX/*
