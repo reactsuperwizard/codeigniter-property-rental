@@ -1,0 +1,1 @@
+<tr><td>{QUANTITY}</td><td><img src="{THUMBNAIL}"/></td><td>{TITLE}</td><td>{DESCRIPTION}</td><td>{PRICE}</td><td>{DISCOUNT_TEXT}</td><td>{TOTAL}</td></tr>
