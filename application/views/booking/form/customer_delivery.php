@@ -139,56 +139,6 @@ if (typeof(addressCache)=='undefined'){
 }
 Object.assign(addressCache,<?php echo json_encode($venueAddresses); ?>);
 
-<?php
-
-function getDistance($addressFrom, $addressTo, $unit = '') {
-
-  return 32;
-  // Google API key
-  $apiKey = 'AIzaSyDjoCnGWzilSyFlNKF-FJmu9pndJipqiiU';
-  
-  // Change address format
-  $formattedAddrFrom    = str_replace(' ', '+', $addressFrom);
-  $formattedAddrTo     = str_replace(' ', '+', $addressTo);
-  
-  // Geocoding API request with start address
-  $geocodeFrom = file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?address='.$formattedAddrFrom.'&sensor=false&key='.$apiKey);
-  $outputFrom = json_decode($geocodeFrom);
-  if(!empty($outputFrom->error_message)){
-      return $outputFrom->error_message;
-  }
-  
-  // Geocoding API request with end address
-  $geocodeTo = file_get_contents('https://maps.googleapis.com/maps/api/geocode/json?address='.$formattedAddrTo.'&sensor=false&key='.$apiKey);
-  $outputTo = json_decode($geocodeTo);
-  if(!empty($outputTo->error_message)){
-      return $outputTo->error_message;
-  }
-  
-  // Get latitude and longitude from the geodata
-  $latitudeFrom    = $outputFrom->results[0]->geometry->location->lat;
-  $longitudeFrom    = $outputFrom->results[0]->geometry->location->lng;
-  $latitudeTo        = $outputTo->results[0]->geometry->location->lat;
-  $longitudeTo    = $outputTo->results[0]->geometry->location->lng;
-  
-  // Calculate distance between latitude and longitude
-  $theta    = $longitudeFrom - $longitudeTo;
-  $dist    = sin(deg2rad($latitudeFrom)) * sin(deg2rad($latitudeTo)) +  cos(deg2rad($latitudeFrom)) * cos(deg2rad($latitudeTo)) * cos(deg2rad($theta));
-  $dist    = acos($dist);
-  $dist    = rad2deg($dist);
-  $miles    = $dist * 60 * 1.1515;
-  
-  // Convert unit and return distance
-  $unit = strtoupper($unit);
-  if($unit == "K"){
-      return round($miles * 1.609344, 2).' km';
-  }elseif($unit == "M"){
-      return round($miles * 1609.344, 2).' meters';
-  }else{
-      return round($miles, 2).' miles';
-  }
-}
-?>
 //if (typeof(customerDelivery)=='undefined'){
 <?php echo $customerDeliveryPrefix; ?>s['customer']={
   'prefix':'<?php echo $customerDeliveryPrefix ?>'
@@ -285,16 +235,6 @@ document.querySelector('#'+_this.prefix+'Customer .customerDetails').style.displ
       }
       f.dataset['chosen']='';
     });
-
-    alert("cde"+chosenAddressID);
-    <?
-      $addressFrom = 'PCRN 1ZZ';
-      $addressTo   = 'GX11 1AA';
-
-      // Get distance in km
-      $distance = getDistance($addressFrom, $addressTo, "K");
-    ?>
-    alert("distance :" + '<?php echo $distance?>');
     switch(chosenAddressID){
       case 'skip':
       case 'residential':
@@ -372,8 +312,8 @@ document.querySelector('#'+_this.prefix+'Customer .customerDetails').style.displ
         var result=[];
 
         reply.data.forEach(function(e){
-          result.push('<option class="v'+e['address_id']+'" data-is_venue="0" value="'+e['address_id']+'">'+e['city']+', '+e['line_1']+((e['line_2']!=null)?', '+
-          e['line_2']:'')+((e['state']!=null)?', '+e['state']:'')+((e['postcode']!=null)?', '+e['postcode']:'')+(e['distance']!=null)?','+e['distance']:''+'</option>');
+          alert(e['distance']);
+          result.push('<option class="v'+e['address_id']+'" data-is_venue="0" value="'+e['address_id']+'">'+e['city']+', '+e['line_1']+((e['line_2']!=null)?', '+e['line_2']:'')+((e['state']!=null)?', '+e['state']:'')+((e['postcode']!=null)?', '+e['postcode']:'')+((e['distance']!=null)?', '+e['distance']:'')+'</option>');
           addressCache[e['address_id']]=e;
         });
         if (mode == "residential") {

@@ -45,32 +45,6 @@ class Customer extends NS_Rental_Controller{
     $this->returnJSON();
   }
   
-  function get_distance($dest) {
-    return 32;
-
-// Google Map API which returns the distance between 2 postcodes
-    $postcode1 = preg_replace('/\s+/', '', $user_data['postcode']); 
-    $postcode2 = preg_replace('/\s+/', '', $postcode);
-    $result    = array();
-
-    $postcode1 = 'STHL 1ZZ';
-    $postcode2 = 'TDCU 1ZZ';
-
-    $url = "http://maps.googleapis.com/maps/api/distancematrix/json?origins=DN17%202HG&destinations=DN17%202HJ&mode=driving&language=en-EN&sensor=false";
-
-    $data   = @file_get_contents($url);
-    $result = json_decode($data, true);
-    //print_r($result);  //outputs the array
-
-    $distance = array( // converts the units
-        "meters" => $result["rows"][0]["elements"][0]["distance"]["value"],
-        "kilometers" => $result["rows"][0]["elements"][0]["distance"]["value"] / 1000,
-        "yards" => $result["rows"][0]["elements"][0]["distance"]["value"] * 1.0936133,
-        "miles" => $result["rows"][0]["elements"][0]["distance"]["value"] * 0.000621371
-    );
-
-    return $distance['kilometers'];
-  }
 }
 
 ?>
