@@ -15,6 +15,9 @@
   End date: {COLLECTION_DATE} {COLLECTION_TIME}
 </p>
 <p>
+  Chargeable Days: {CHAREGEABLE_DAYS}
+</p>
+<p>
   Valid until: {EXPIRATION_DATE} {EXPIRATION_TIME}
 </p>
 

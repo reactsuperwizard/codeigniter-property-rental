@@ -259,8 +259,8 @@ class Quote extends NS_Rental_Controller {
     $this->reply['data']['delivery_address'] = $this->db->select('a.*')
     ->get_where('address AS a',array('a.address_id'=>$this->reply['data']['delivery_address_id'], 'address_type_id'=>'2'),1)->row_array();
 
-    // $this->reply['data']['users_delivery_address'] = $this->db->select('a.*')
-    // ->get_where('address AS a',array('a.user_id'=>'351'),1)->row_array();
+    $this->reply['data']['users_delivery_address'] = $this->db->select('a.*')
+    ->get_where('address AS a',array('a.user_id'=>'351'),1)->row_array();
 
     
     $this->reply['data']['variations']=$this->db->select('*,IFNULL(notes,\'\') AS notes')->get_where('quote_variation',array('quote_id'=>$quoteID))->result_array();
@@ -426,7 +426,8 @@ class Quote extends NS_Rental_Controller {
     $this->newAddresses=array();
     $this->load->model('Address_model');
 
-    $requiredFields=array('line_1','city','state','postcode','phone');
+    // $requiredFields=array('line_1','city','state','postcode','phone');
+    $requiredFields=array('line_1','city');
 
     $initialResidentialAddressID=intval($_POST['residential_address_id']);
     
@@ -452,7 +453,8 @@ class Quote extends NS_Rental_Controller {
     $this->newAddresses=array();
     $this->load->model('Address_model');
 
-    $requiredFields=array('line_1','line_2','city','state','postcode');//,'phone');
+    // $requiredFields=array('line_1','line_2','city','state','postcode');//,'phone');
+    $requiredFields=array('line_1','city');//,'phone');
 
     $initialDeliveryAddressID=intval($_POST['delivery_address_id']);
     

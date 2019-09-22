@@ -64,3 +64,4 @@ $mailer['default']=array(
   ,'auth' => true
   ,'from'=>array('email'=>'rebookings@ntes.net.au','name'=>'RentalMagnet')
   );
+  

@@ -257,6 +257,7 @@ Object.assign(quotes,{
         
         itemCache=reply.itemCache;
         reply.data.variations.forEach(function(v){
+          console.log(': '+JSON.stringify(v,null,2));
           quotes.variations.add(v);
         });
         
@@ -936,7 +937,7 @@ quotes['variations']={
           }
         }
         
-    multipliedPrice=(parseFloat(variationElement.querySelector('input[name="variation['+variationID+']['+entryID+'][price]"]').value)*quantity*chargeableDays).toFixed(2);
+      multipliedPrice=(parseFloat(variationElement.querySelector('input[name="variation['+variationID+']['+entryID+'][price]"]').value)*quantity*chargeableDays).toFixed(2);
 
       break;
       case 'service':

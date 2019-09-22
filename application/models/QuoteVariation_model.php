@@ -25,9 +25,11 @@ class QuoteVariation_model extends CI_Model{
       
       $variationData['delivery_contact']=json_decode($variationData['delivery_contact_json'],true);
       
-      
       unset($initialData);
     }
+    // echo "HLOG variation data start";
+    // print_r($variationData);
+    // echo "HLOG variation data end";
     
     $variationData['due_date']=date('Y-m-d',($variationData['collection_timestamp']+$variationData['due_days']*86400));
     $variationData['booking_flag']=($variationData['booking_id']>0)?1:0;
@@ -90,6 +92,7 @@ class QuoteVariation_model extends CI_Model{
           $variationData['itemQuantities'][$e['item_id']]=$e['quantity'];
         case 'additionalItem':
           $e['start_price']=$e['price']*$e['quantity'];
+          // $e['start_price']=$e['price']*$e['quantity']*$variationData['chargeable_days'];
           $target='items';
         break;
         case 'service':
@@ -117,6 +120,9 @@ class QuoteVariation_model extends CI_Model{
       //$variationData['total_'.$target]+=$e['total'];
       $variationData['total_'.$target]+=$e['start_price'];
       $variationData['subtotal_discount']+=$e['discount_amount'];
+      // echo "HLOG e start";
+      // print_r($e);
+      // echo "HLOG e end";
     }
     switch($variationData['discount_type']){
       case 'percentage':

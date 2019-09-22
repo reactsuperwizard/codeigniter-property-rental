@@ -153,34 +153,42 @@ class User extends NS_Rental_Controller {
       }
     }
 
-    if ($isValidate) {
+    if ($isValidate == $isValidate) {
 
-      $userID = $this->User_model->save($_POST,$validationRules);
-      
-      //Address Saving Section
-      if ($userID) {
-        $this->load->model('Address_model');
+      $this->load->model('Address_model');
         
-        // $requiredFields=array('user_id', 'line_1','line_2','city','phone', 'postcode', 'state');
-        $requiredFields=array('user_id', 'line_1','city');
-        $_POST['residential_address']['user_id'] = $userID;
-        $_POST['residential_address']['line_1'] = $_POST['line_1'];
-        $_POST['residential_address']['line_2'] = $_POST['line_2'];
-        $_POST['residential_address']['city'] = $_POST['city'];
-        $_POST['residential_address']['phone'] = $_POST['phone'];
-        $_POST['residential_address']['postcode'] = $_POST['postcode'];
-        $_POST['residential_address']['state'] = $_POST['state'];
+      // $requiredFields=array('user_id', 'line_1','line_2','city','phone', 'postcode', 'state');
+      $requiredFields=array('line_1','city');
+      $_POST['residential_address']['line_1'] = $_POST['line_1'];
+      $_POST['residential_address']['line_2'] = $_POST['line_2'];
+      $_POST['residential_address']['city'] = $_POST['city'];
+      $_POST['residential_address']['phone'] = $_POST['phone'];
+      $_POST['residential_address']['postcode'] = $_POST['postcode'];
+      $_POST['residential_address']['state'] = $_POST['state'];
+
+      if ($this->Address_model->isValidateData(array_merge(
+        $_POST['residential_address']
+        ,array('type'=>'residential')), true, $requiredFields)) {
+        $userID = $this->User_model->save($_POST,$validationRules);
         
-        $address_id=$this->db->get_where('address',array('user_id'=>$userID, 'address_type_id'=>'1'))->row_array();
-        
-        $_POST['residential_address']['address_id'] = $address_id["address_id"];
-        
-        $address_id = $residentialAddressID=$this->Address_model
-        ->errorContainer('residential_address')
-        ->save(array_merge(
-          $_POST['residential_address']
-        ,array('type'=>'residential')
-        ),true,$requiredFields);
+        //Address Saving Section
+        if ($userID) {
+          
+          $_POST['residential_address']['user_id'] = $userID;
+          $requiredFields=array('user_id', 'line_1','city');
+          $address_id=$this->db->get_where('address',array('user_id'=>$userID, 'address_type_id'=>'1'))->row_array();
+          
+          $_POST['residential_address']['address_id'] = $address_id["address_id"];
+          
+          $address_id = $residentialAddressID=$this->Address_model
+          ->errorContainer('residential_address')
+          ->save(array_merge(
+            $_POST['residential_address']
+            ,array('type'=>'residential')
+          ),true,$requiredFields);
+        }
+      } 
+      else {
       }
     }
   }

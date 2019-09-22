@@ -18,6 +18,8 @@ get_instance()->includeLocalJS('nickolas_solutions.js');
 <script type="text/javascript" src="https://checkout.stripe.com/checkout.js"></script>
 <link rel="stylesheet" href="<?php echo NS_BASE_URL; ?>css/jquery-ui.min.css"/>
 <link rel="stylesheet" href="<?php echo NS_BASE_URL; ?>css/jquery.dataTables.css"/>
+<link rel="stylesheet" href="css/bootstrap.min.css"/>
+<script src="js/bootstrap.min.js"></script>
 <style type="text/css">
 <?php include(APPPATH.'../css/bootstrap.min.css'); ?>  
 </style>
@@ -102,11 +104,17 @@ get_instance()->includeLocalJS('nickolas_solutions.js');
   <div class="header clearfix" style="margin-bottom: 20px;">
     <div  class="clearfix">
       <div class="pull-left">
-        <div class="periodLabel">
-          <span onclick="NS_Rental.period.show();"><?php echo $this->lang->phrase('choose_period');?></span>
-        </div>
       </div>
       <div class="pull-right">
+          <li style="position: relative; content-align:center">
+            <div style="margin-left: -10%">
+              <h3 style="color:#eb5634;">Important! Please Complete Here</h3>
+              <h5 style="color:#ffffff;">Hi Thanks for Stopping By! Please Add Your Hire Date Here</h5>
+              <div class="periodLabel">
+                <span onclick="NS_Rental.period.show();"><?php echo $this->lang->phrase('choose_period');?></span>
+              </div>
+            </div>
+          </li>
           <li><span class="items" onclick="NS_Rental.items.init();"><?php echo $this->lang->phrase('items'); ?></span></li>
           <li><span class="cart" onclick="NS_Rental.cart.init();"><?php echo $this->lang->phrase('cart'); ?></span></li>
           <li><span class="login hidden" onclick="NS_Rental.user.prepareLogin();">Login</span></li>

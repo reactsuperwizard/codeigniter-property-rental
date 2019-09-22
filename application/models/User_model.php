@@ -121,7 +121,7 @@ class User_model extends CI_Model {
     $emailSubject = 'Dear '.$dataSet['first_name'].' Welcome to RentEvent';
     $message_body = 'Here is your password to access our system in the future. '.$password.
     ', You will need this password to log in and view your current and previous bookings and to update any address or booking details. Thanks for being a customer and we look forward to exceeding your expectations every step of the way. Thanks, The RentEvent Team.';
-    $this->EmailHandler->send_email_rental($emailSubject, $dataSet['email'], $message_body);
+    // $this->EmailHandler->send_email_rental($emailSubject, $dataSet['email'], $message_body);
 
     /* End */
 

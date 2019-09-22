@@ -199,7 +199,7 @@
       </tr>
       <tr>
         <td>Start Date: {DELIVERY_DATE_STRING}</td>
-        <td>End Date: {COLLECTION_DATE_STRING}</td>
+        <td>End Date: {COLLECTION_DATE_STRING} <b>({CHARGEABLE_DAYS})</b> days charge</td>
       </tr>
       <tr>
         <td><b>Valid Until:</b></td>
@@ -367,6 +367,7 @@ NS_Rental['quote']={
           ,'expiration_time','expiration_date_string'
           ,'delivery_address_string','name','date_today'
           ,'variation_count'
+          ,'chargeable_days'
         ]
         ,'__':['expiration_flag','variation_count']
       }
@@ -382,13 +383,40 @@ NS_Rental['quote']={
           reply['data'][at+'_address_string']='To be advised';
         }
       });
-      
       reply['data']['delivery_address']=Object.assign(reply['data']['delivery_address'],reply['data']['delivery_contact']);
-      
       _this['data']=reply['data'];
       _this['data']['variationCodes']={};
       
+      // console.log(reply['data']['variations']);HLOGHLOG
       reply['data']['variations'].forEach(function(v,vi){
+        v['discount_amount'] = 0;
+        v['grand_total'] = 0;
+        v['total_items'] = 0;
+
+              v['entries']['items'].forEach(function(item) {
+                
+                var itemtotal = item['total']*reply['data']['chargeable_days'];
+                item['start_price'] = item['start_price'] * reply['data']['chargeable_days'];
+
+                v['grand_total'] += itemtotal;
+                v['total_items'] += item['start_price'];
+                
+                item['total'] = itemtotal.toFixed(2);
+                var discounttmp = item['discount_amount'];
+                if (item['discount_type'] == 'percentage') {
+                  discounttmp = item['discount_amount'] * reply['data']['chargeable_days'];
+                  item['discount_amount'] = discounttmp.toFixed(2);
+                }
+                v['discount_amount'] += discounttmp;
+                console.log(item);
+              });
+
+          console.log(v);
+        v['subtotal_discount'] = v['discount_amount'];
+        v['discount_amount'] = v['discount_amount'].toFixed(2);
+        v['tax'] = (v['grand_total']/11).toFixed(2);
+        v['grand_total'] = v['grand_total'].toFixed(2);
+        v['total_items'] = v['total_items'].toFixed(2);
         _this['data']['variationCodes'][v['code']]=vi;
         variations.push(_this.parseVariation(v));
       });
@@ -401,10 +429,10 @@ NS_Rental['quote']={
         .replace('{VARIATIONS}',variations.join(''))
         .replace('{CUSTOMER_COMPANY}',reply['data']['customer_company'])
         .replace(/{CURRENCY}/g,'$');
-      //console.log(variations.join());
-      document.querySelector(_this.container)
-        .insertAdjacentHTML('beforeend',viewTemplate);
-      _that.loadSection('quote');
+        //console.log(variations.join());
+        document.querySelector(_this.container)
+          .insertAdjacentHTML('beforeend',viewTemplate);
+        _that.loadSection('quote');
     }},1);
   }
   ,'parseVariation':function(variationData){
@@ -416,7 +444,7 @@ NS_Rental['quote']={
     }
     ,baseTemplate=document.querySelector('#NS_Rental .body.quote > .templates > .variation').innerHTML
     ,itemRowTemplate=document.querySelector('#NS_Rental .body.quote > .templates > table.itemRow > tbody').innerHTML
-    ,itemKeys={'{}':['quantity','price','title','description','discount_text','total', 'thumbnail']}
+    ,itemKeys={'{}':['quantity','price','title','description','discount_text','thumbnail', 'total']}
     ,itemRows=[]
     ,serviceRowTemplate=document.querySelector('#NS_Rental .body.quote > .templates > table.serviceRow > tbody').innerHTML
     ,serviceKeys={'{}':['quantity','price','title','description','discount_text','total','people']}
@@ -436,9 +464,10 @@ NS_Rental['quote']={
   ,'parseTemplateVars':function(templateText,templateKeys,templateData){
     var templateText=templateText,mode='';
     for (mode in templateKeys){
-      //console.log(mode+': '+JSON.stringify(templateKeys[mode],null,2));
-      //console.log(templateText);
+      // console.log(mode+': '+JSON.stringify(templateKeys[mode],null,2));
+      // console.log('templateText : ' + templateText);
       templateKeys[mode].forEach(function(k){
+        // console.log(mode[0]+k.toUpperCase()+mode[1] + " : " + templateData[k]);
         templateText=templateText
           .replace(new RegExp(mode[0]+k.toUpperCase()+mode[1],'g'),templateData[k]);
       });

@@ -479,13 +479,13 @@ class Booking extends NS_Rental_Controller{
   }
 /**/
   function validateResidentialAddress($initialResidentialAddressID=0){
-    if (!isset($this->newAddresses)){
+    /* if (!isset($this->newAddresses)){
       $this->newAddresses=array();
     }
     
     $this->load->model('Address_model');
 
-    $requiredFields=array('line_1','city','phone');
+    $requiredFields=array('line_1','city');
 
     $initialResidentialAddressID=(isset($_POST['residential_address_id']))?intval($_POST['residential_address_id']):$initialResidentialAddressID;
     $this->residentialAddressID=$initialResidentialAddressID;
@@ -509,6 +509,32 @@ class Booking extends NS_Rental_Controller{
       $this->error('Customer phone should be valid','residential_address[phone]');
     }
     $this->reply['data']['residential_address_id']=$this->residentialAddressID;
+ */
+    
+    $this->newAddresses=array();
+    $this->load->model('Address_model');
+
+    // $requiredFields=array('line_1','city','state','postcode','phone');
+    $requiredFields=array('line_1','city');
+
+    $initialResidentialAddressID=intval($_POST['residential_address_id']);
+    
+    $residentialAddressID=$this->Address_model->errorContainer('residential_address')
+      ->validate($initialResidentialAddressID,'residential',$requiredFields,(!empty($_POST['residential_address'])?array_merge(
+        $_POST['residential_address']
+        ,array('type'=>'residential')
+      ):false));
+
+    if ($residentialAddressID>0){
+      $this->reply['data']['residential_address_id']=$residentialAddressID;
+      if ($initialResidentialAddressID!=$residentialAddressID){
+        $this->newAddresses[]=$residentialAddressID;
+      }
+    }
+    else {
+      $this->reply['data']['residential_address']=$this->Address_model->dataToValidate;
+      //$this->reply['data']['failed_section']='residential_address';
+    }
   }
 
   function validateDeliveryAddress($initialDeliveryAddressID=0){
@@ -543,7 +569,30 @@ class Booking extends NS_Rental_Controller{
       $this->deliveryAddressID=$deliveryAddressID;
     }
     $this->reply['data']['delivery_address_id']=$this->deliveryAddressID;
+    // $this->newAddresses=array();
+    // $this->load->model('Address_model');
+
+    // // $requiredFields=array('line_1','line_2','city','state','postcode');//,'phone');
+    // $requiredFields=array('line_1','city');//,'phone');
+
+    // $initialDeliveryAddressID=intval($_POST['delivery_address_id']);
     
+    // $deliveryAddressID=$this->Address_model->errorContainer('delivery_address')
+    //   ->validate($initialDeliveryAddressID,'delivery',$requiredFields,(!empty($_POST['delivery_address'])?array_merge(
+    //     $_POST['delivery_address']
+    //     ,array('type'=>'delivery')
+    //   ):false));
+
+    // if ($deliveryAddressID>0){
+    //   $this->reply['data']['delivery_address_id']=$deliveryAddressID;
+    //   if ($initialDeliveryAddressID!=$deliveryAddressID){
+    //     $this->newAddresses[]=$deliveryAddressID;
+    //   }
+    // }
+    // else {
+    //   $this->reply['data']['delivery_address']=$this->Address_model->dataToValidate;
+    //   //$this->reply['data']['failed_section']='delivery_address';
+    // }
 
 /** /
     if (empty($deliveryContact) && $quoteID>0){
@@ -1295,9 +1344,11 @@ class Booking extends NS_Rental_Controller{
       }
       $this->validateRentTimestamps($_POST);
 
-      // $this->validateCustomerDetails();
-      $this->validateCustomerDetails();
+      $dataSet['customer_id']= $this->validateCustomerDetails();
 
+      if ($this->hasErrors()){
+        $this->returnJSON();
+      }      
       $dataSet=array_merge($dataSet,$this->validateAddresses());
       $this->validateLogistics();
       

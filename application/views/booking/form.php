@@ -356,6 +356,13 @@ Object.assign(bookings,{
       'success':function(reply){
         _this.close();
       }
+      ,'fail':function(reply){
+        var reply=reply;
+        ['customer_id'].forEach(function(key){
+          document.querySelector('#quoteForm input[name="'+key+'"]').value=reply.data[key];
+        });
+        _NS.defaultReplyActions.fail(reply);
+      }
     },1);
   }
   ,'close':function(){
